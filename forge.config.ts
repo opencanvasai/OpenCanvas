@@ -1,45 +1,53 @@
-import "dotenv/config";
+import * as dotenv from "dotenv";
+dotenv.config(); // Force load before anything else runs
+
 import type { ForgeConfig } from "@electron-forge/shared-types";
-import { MakerSquirrel } from "@electron-forge/maker-squirrel";
 import { MakerZIP } from "@electron-forge/maker-zip";
-import { MakerDeb } from "@electron-forge/maker-deb";
-import { MakerRpm } from "@electron-forge/maker-rpm";
 import { MakerDMG } from "@electron-forge/maker-dmg";
 import { VitePlugin } from "@electron-forge/plugin-vite";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
+
+// Strict checks for signing AND notarization
+if (!process.env.APPLE_SIGN_IDENTITY) throw new Error("ERROR: APPLE_SIGN_IDENTITY is missing.");
+if (!process.env.APPLE_ID) throw new Error("ERROR: APPLE_ID is missing.");
+if (!process.env.APPLE_APP_SPECIFIC_PASSWORD) throw new Error("ERROR: APPLE_APP_SPECIFIC_PASSWORD is missing.");
+if (!process.env.APPLE_TEAM_ID) throw new Error("ERROR: APPLE_TEAM_ID is missing.");
+
+const appleId = process.env.APPLE_ID;
+const appleIdPassword = process.env.APPLE_APP_SPECIFIC_PASSWORD;
+const appleTeamId = process.env.APPLE_TEAM_ID;
+
 const config: ForgeConfig = {
-  packagerConfig: {
+packagerConfig: {
     asar: true,
     executableName: "opencanvas",
+    
     osxSign: {
-      identity: "ad-hoc",
-      preAutoEntitlements: false,
-      // @ts-expect-error: hardenedRuntime is valid in electron-osx-sign but missing in types
-      hardenedRuntime: false,
+      optionsForFile: (filePath) => {
+        return {
+          entitlements: "entitlements.plist",
+          hardenedRuntime: true,
+          signatureFlags: "library"
+        };
+      }
+    },
+
+    // Force notarization to run
+    osxNotarize: {
+      appleId: appleId,
+      appleIdPassword: appleIdPassword,
+      teamId: appleTeamId,
     },
   },
   rebuildConfig: {},
   makers: [
-    ...(process.platform === 'win32' ? [
-      new MakerSquirrel({
-        name: "OpenCanvas",
-        authors: "Gyana Ranjan",
-        description: "OpenCanvas Desktop Application",
-      })
-    ] : []),
-    new MakerZIP({}, ["darwin", "win32"]),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerZIP({}, ["darwin"]),
     new MakerDMG({}),
   ],
   publishers: [
     {
-      /*
-       * Publish release on GitHub with update feeds for auto-updates.
-       * Apps will automatically check for updates and notify users.
-       */
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
@@ -48,7 +56,6 @@ const config: ForgeConfig = {
         },
         draft: true,
         prerelease: false,
-        // Generate update manifest for auto-updates
         generateReleaseNotes: true,
       },
     },
