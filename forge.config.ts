@@ -25,7 +25,6 @@ packagerConfig: {
     executableName: "opencanvas",
     
    osxSign: {
-      identity: process.env.APPLE_SIGN_IDENTITY, // Add this line back
       optionsForFile: (filePath) => {
         return {
           entitlements: "entitlements.plist",
