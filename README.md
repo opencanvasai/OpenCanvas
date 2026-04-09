@@ -1,6 +1,6 @@
 # Open Canvas
 
-**The Open-source AI Native Creative Canvas **
+**The Open-source AI Native Creative Canvas**
 
 OpenCanvas — The professional node-based AI editor for creators. Free and open source.
 
