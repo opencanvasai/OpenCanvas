@@ -3,7 +3,7 @@
 
 OpenCanvas is a free, open-source, node-based AI editor for creators. Connect different AI models, chain them together, and build powerful AI workflows visually — no code required.
 
-![1770641467970](images/1770641467970.png)
+![1770641467970](images/1770641467970%20(2).png)
 
 ## Download
 
