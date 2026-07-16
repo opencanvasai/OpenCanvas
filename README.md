@@ -6,6 +6,10 @@ OpenCanvas — The professional node-based AI editor for creators. Free and open
 
 Open Canvas is a free, open-source platform that lets you work with AI in a completely visual way. Think of it as your creative workspace where you can connect different AI models, chain them together, and build powerful AI workflows—all without writing a single line of code.
 
+## Download
+
+`https://github.com/opencanvasai/OpenCanvas/releases`
+
 ## What Makes Open Canvas Different?
 
 🎨 **Visual & Intuitive**  
